@@ -16,12 +16,7 @@ test_x <- matrix(x[-train_indices, ],length(x[-train_indices, ]),1)
 
 train_y <- matrix(y[train_indices],length(y[train_indices]),1)
 test_y <- matrix(y[-train_indices],length(y[-train_indices]),1)
-
-
-plot(x, y, xlab="Time (ms)", ylab="Acceleration (g)")
 ```
-
-![](Homework4-oscar_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
 
 ``` r
 ## Epanechnikov kernel function
@@ -333,37 +328,9 @@ library('caret') ## 'knnreg' and 'createFolds'
 ## create five folds
 set.seed(1985)
 inc_flds  <- createFolds(mcycle$times, k=5)
-print(inc_flds)
-```
+#print(inc_flds)
+#sapply(inc_flds, length)  ## not all the same length
 
-    ## $Fold1
-    ##  [1]   4   7  10  12  13  22  26  40  44  53  54  57  60  69  73  76  80  84  93
-    ## [20] 100 118 120 122 129 130 132
-    ## 
-    ## $Fold2
-    ##  [1]   3  15  16  21  28  32  34  43  47  48  49  51  55  59  83  85  87  89  92
-    ## [20]  96  98 104 112 116 117 125 131
-    ## 
-    ## $Fold3
-    ##  [1]   2  11  14  19  25  31  36  42  46  50  52  66  67  75  77  79  88  91  97
-    ## [20] 101 105 109 111 121 126 127
-    ## 
-    ## $Fold4
-    ##  [1]   6   8   9  17  29  30  33  35  38  39  45  64  65  70  71  74  81  82  94
-    ## [20]  99 102 103 106 108 114 124 133
-    ## 
-    ## $Fold5
-    ##  [1]   1   5  18  20  23  24  27  37  41  56  58  61  62  63  68  72  78  86  90
-    ## [20]  95 107 110 113 115 119 123 128
-
-``` r
-sapply(inc_flds, length)  ## not all the same length
-```
-
-    ## Fold1 Fold2 Fold3 Fold4 Fold5 
-    ##    26    27    26    27    27
-
-``` r
 cvknnreg <- function(kNN = 10, flds=inc_flds) {
   cverr <- rep(NA, length(flds))
   for(tst_idx in 1:length(flds)) { ## for each fold
@@ -385,29 +352,7 @@ cvknnreg <- function(kNN = 10, flds=inc_flds) {
 
 ## Compute 5-fold CV for kNN = 1:20
 cverrs <- sapply(1:20, cvknnreg)
-print(cverrs) ## rows are k-folds (1:5), cols are kNN (1:20)
-```
-
-    ##           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]
-    ## [1,] 304.06100 323.25070 327.93650 317.91560 296.71976 298.11257 279.43012
-    ## [2,]  99.90961  79.22414  67.64238  70.84922  68.72826  68.04492  66.11689
-    ## [3,] 206.77112 205.31617 157.42737 155.60599 149.14695 122.52324 125.50132
-    ## [4,] 100.49061 102.55486 104.02743  98.55299  97.60256 100.29200 103.32957
-    ## [5,]  87.44790  88.63471  85.72779  87.33086  75.51581  58.21995  64.58220
-    ##           [,8]      [,9]     [,10]     [,11]     [,12]     [,13]     [,14]
-    ## [1,] 268.81550 262.71339 250.77628 261.61682 248.87744 248.83282 221.86936
-    ## [2,]  68.32897  66.16742  63.88807  65.48258  73.70466  80.08642  84.47431
-    ## [3,] 120.98861 136.13275 143.97778 138.11437 138.09343 144.86240 148.10901
-    ## [4,] 105.24875 103.55908 101.42145 110.19118 103.56479 120.13827 123.18147
-    ## [5,]  65.88748  69.17635  75.93323  75.79696  61.76732  61.51189  73.57488
-    ##          [,15]     [,16]     [,17]     [,18]     [,19]     [,20]
-    ## [1,] 232.30691 231.78737 238.93776 236.07827 237.00149 235.29919
-    ## [2,]  87.08680  87.38077  91.83742  98.03578  97.55173  97.75408
-    ## [3,] 148.61889 145.47324 145.22536 145.36779 146.46822 145.15278
-    ## [4,] 123.18804 125.38031 123.67754 121.06848 120.00266 115.33329
-    ## [5,]  84.51509  87.37825  86.83950  87.33262  95.91016 116.48398
-
-``` r
+#print(cverrs) ## rows are k-folds (1:5), cols are kNN (1:20)
 cverrs_mean <- apply(cverrs, 2, mean)
 cverrs_sd   <- apply(cverrs, 2, sd)
 
@@ -425,6 +370,5 @@ abline(h=cverrs_mean[best_idx] + cverrs_sd[best_idx], lty=3)
 
 ![](Homework4-oscar_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
-Base on how the sd approximate the 200 reference line, we want to pick
-the most simple models. Therefore, we will pick k = 17 because it is the
-most simplist and it’s sd is on the basic line.
+We will pick k = 20 because it is the most simplest and it’s median is
+within one sd of the error of the least error model.

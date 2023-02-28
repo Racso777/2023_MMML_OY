@@ -20,9 +20,6 @@ test_x <- matrix(x[-train_indices, ],length(x[-train_indices, ]),1)
 
 train_y <- matrix(y[train_indices],length(y[train_indices]),1)
 test_y <- matrix(y[-train_indices],length(y[-train_indices]),1)
-
-
-plot(x, y, xlab="Time (ms)", ylab="Acceleration (g)")
 ```
 
 
@@ -209,8 +206,8 @@ library('caret') ## 'knnreg' and 'createFolds'
 ## create five folds
 set.seed(1985)
 inc_flds  <- createFolds(mcycle$times, k=5)
-print(inc_flds)
-sapply(inc_flds, length)  ## not all the same length
+#print(inc_flds)
+#sapply(inc_flds, length)  ## not all the same length
 
 cvknnreg <- function(kNN = 10, flds=inc_flds) {
   cverr <- rep(NA, length(flds))
@@ -233,7 +230,7 @@ cvknnreg <- function(kNN = 10, flds=inc_flds) {
 
 ## Compute 5-fold CV for kNN = 1:20
 cverrs <- sapply(1:20, cvknnreg)
-print(cverrs) ## rows are k-folds (1:5), cols are kNN (1:20)
+#print(cverrs) ## rows are k-folds (1:5), cols are kNN (1:20)
 cverrs_mean <- apply(cverrs, 2, mean)
 cverrs_sd   <- apply(cverrs, 2, sd)
 
@@ -249,5 +246,5 @@ points(x=best_idx, y=cverrs_mean[best_idx], pch=20)
 abline(h=cverrs_mean[best_idx] + cverrs_sd[best_idx], lty=3)
 ```
 
-Base on how the sd approximate the 200 reference line, we want to pick the most simple models. Therefore, we will pick k = 17 because it is the most simplist and it's sd is on the basic line.
+We will pick k = 20 because it is the most simplest and it's median is within one sd of the error of the least error model.
 
