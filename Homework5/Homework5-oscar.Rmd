@@ -1,0 +1,48 @@
+---
+title: "Homework5-oscar"
+output: html_document
+date: "2023-04-02"
+---
+
+```{r}
+library(gbm)
+library(caret)
+```
+
+
+```{r}
+vowel.train = read.csv('https://hastie.su.domains/ElemStatLearn/datasets/vowel.train')
+vowel.test = read.csv('https://hastie.su.domains/ElemStatLearn/datasets/vowel.test')
+vowel.train <- vowel.train[, -1]
+vowel.test <- vowel.test[, -1]
+
+y_train <- as.numeric(vowel.train[,1])
+X_train <- as.matrix(vowel.train[,-1])
+
+y_test <- as.numeric(vowel.test[,1])
+X_test <- as.matrix(vowel.test[,-1])
+```
+
+```{r}
+param_grid <- expand.grid(n.trees = seq(from = 50, to = 1000, by = 50), interaction.depth = 1, shrinkage = 0.1, n.minobsinnode = 10)
+
+train_control <- trainControl(method = "cv", number = 5, verboseIter = FALSE, allowParallel = TRUE)
+
+model <- train(x = X_train,y = y_train, method = "gbm",trControl = train_control, tuneGrid = param_grid, verbose = FALSE)
+
+print(model)
+```
+
+```{r}
+model <- gbm.fit(X_train, y_train, distribution = "multinomial", n.trees = 300, interaction.depth = 1,shrinkage = 0.1,n.minobsinnode = 10,verbose = FALSE)
+
+test_pred <- predict(model, newdata = X_test, n.trees = 300, type="response")
+
+test_pred_class <- apply(test_pred, 1, which.max)
+
+misclassification_rate <- mean(test_pred_class != y_test)
+
+print(misclassification_rate)
+```
+
+
